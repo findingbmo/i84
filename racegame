@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Race Game</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        .track { width: 100%; height: 100px; background: #ddd; position: relative; margin-top: 20px; }
+        .car { width: 50px; height: 30px; background: red; position: absolute; top: 35px; left: 0; transition: left 0.1s linear; }
+        .typing-box { width: 80%; padding: 10px; margin-top: 20px; font-size: 18px; }
+    </style>
+</head>
+<body>
+    <h1>Typing Race Game</h1>
+    <p id="text">The quick brown fox jumps over the lazy dog.</p>
+    <input type="text" id="input" class="typing-box" placeholder="Start typing...">
+    <div class="track">
+        <div class="car"></div>
+    </div>
+    <p id="stats">WPM: 0 | Accuracy: 100%</p>
+    
+    <script>
+        const textElement = document.getElementById("text");
+        const inputElement = document.getElementById("input");
+        const carElement = document.querySelector(".car");
+        const statsElement = document.getElementById("stats");
+        
+        let startTime, typedChars = 0, mistakes = 0;
+        
+        inputElement.addEventListener("input", function() {
+            const inputText = inputElement.value;
+            const targetText = textElement.textContent;
+            
+            if (!startTime) startTime = Date.now();
+            
+            typedChars = inputText.length;
+            let correctChars = 0;
+            
+            for (let i = 0; i < typedChars; i++) {
+                if (inputText[i] === targetText[i]) {
+                    correctChars++;
+                } else {
+                    mistakes++;
+                }
+            }
+            
+            let elapsedMinutes = (Date.now() - startTime) / 60000;
+            let wpm = Math.round((correctChars / 5) / elapsedMinutes) || 0;
+            let accuracy = Math.max(0, Math.round((correctChars / typedChars) * 100)) || 100;
+            
+            statsElement.textContent = `WPM: ${wpm} | Accuracy: ${accuracy}%`;
+            
+            let progress = (correctChars / targetText.length) * 100;
+            carElement.style.left = `${progress}%`;
+            
+            if (correctChars === targetText.length) {
+                alert(`Race Complete! Your WPM: ${wpm}`);
+                inputElement.disabled = true;
+            }
+        });
+    </script>
+</body>
+</html>
